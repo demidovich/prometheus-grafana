@@ -1,8 +1,0 @@
-[
-  {
-    "targets": ["localhost:9100", "localhost:9113", "localhost:10001"],
-    "labels": {
-      "instance": "LOCALHOST"
-    }
-  }
-]

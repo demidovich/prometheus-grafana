@@ -807,29 +807,6 @@
         "useTags": false
       },
       {
-        "allValue": null,
-        "current": {
-          "text": "All",
-          "value": "$__all"
-        },
-        "datasource": "Prometheus",
-        "hide": 0,
-        "includeAll": true,
-        "label": "Mall",
-        "multi": false,
-        "name": "mall_id",
-        "options": [],
-        "query": "label_values(mall_id)",
-        "refresh": 1,
-        "regex": "",
-        "sort": 3,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
         "auto": true,
         "auto_count": 1,
         "auto_min": "10s",

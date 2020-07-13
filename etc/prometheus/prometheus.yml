@@ -9,5 +9,5 @@ scrape_configs:
     scrape_interval: "15s"
     file_sd_configs:
       - files:
-        - '/etc/prometheus/node.enabled/*.json'
+        - '/etc/prometheus/node/*.json'
 #        - '/var/lib/prometheus/discovery/node/*.json'
