@@ -1,0 +1,94 @@
+version: '3.2'
+
+services:
+
+    prometheus:
+        image: prom/prometheus:v2.19.2
+        container_name: stat-prometheus
+        volumes:
+            - ./etc/prometheus:/etc/prometheus
+            - ./var/prometheus:/prometheus
+        command:
+            - '--config.file=/etc/prometheus/prometheus.yml'
+            - '--storage.tsdb.path=/prometheus'
+        network_mode: host
+        ports:
+            - 9090:9090
+#        links:
+#            - cadvisor:cadvisor
+#        depends_on:
+#            - cadvisor
+        restart: always
+
+    # В релизах после 5.0.4 проблема с сохранением дашбордов
+    grafana:
+        image: grafana/grafana:5.0.4
+        container_name: stat-grafana
+        volumes:
+            - ./etc/grafana/provisioning:/etc/grafana/provisioning:rw
+            - ./var/grafana:/var/lib/grafana:rw
+        env_file:
+        - .env
+        depends_on:
+            - prometheus
+        network_mode: host
+        ports:
+            - 3000:3000
+        restart: always
+
+#     node-exporter:
+#         image: prom/node-exporter:v0.17.0
+#         container_name: stat-node-exporter
+#         volumes:
+#             - /proc:/host/proc:ro
+#             - /sys:/host/sys:ro
+#             - /:/rootfs:ro
+#         command:
+#             - --path.procfs=/host/proc
+#             - --path.sysfs=/host/sys
+#             - --collector.filesystem.ignored-mount-points
+#             - ^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)
+#         ports:
+#             - 9100:9100
+#         restart: always
+# #        deploy:
+# #            mode: global
+
+#    alertmanager:
+#        image: prom/alertmanager:v0.16.1
+#        ports:
+#            - 9093:9093
+#        volumes:
+#            - ./alertmanager/etc:/etc/alertmanager
+#        restart: always
+#        command:
+#            - --config.file=/etc/alertmanager/config.yml
+#            - --storage.path=/alertmanager
+
+#    alertmanager-bot:
+#        image: metalmatze/alertmanager-bot:0.3.1
+#        environment:
+#            - ALERTMANAGER_URL=http://<alertmngerURL>:9093 #откуда бот получает алерт
+#            - LISTEN_ADDR=0.0.0.0:8080
+#            - BOLT_PATH=/data/bot.db
+#            - STORE=bolt
+#            - TELEGRAM_ADMIN=<TelegramAdminID> #ваш ID в телеграм
+#            - TELEGRAM_TOKEN=<TelegramBotToken> # токен бота
+#            - TEMPLATE_PATHS=/templates/default.tmpl
+#        volumes:
+#            - /srv/monitoring/alertmanager-bot:/data
+#        ports:
+#            - 8080:8080
+#
+#    cadvisor:
+#        image: google/cadvisor
+#        volumes:
+#            - /:/rootfs:ro
+#            - /var/run:/var/run:rw
+#            - /sys:/sys:ro
+#            - /var/lib/docker/:/var/lib/docker:ro
+#        ports:
+#            - 8081:8080
+#        restart: always
+#        deploy:
+#            mode: global
