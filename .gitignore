@@ -17,4 +17,6 @@ Thumbs.db
 Homestead.json
 Homestead.yaml
 
+/etc/prometheus/node/*.json
+!/etc/prometheus/node/localhost.json
 var/*

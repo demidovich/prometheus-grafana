@@ -1,0 +1,14 @@
+[
+    {
+        "targets": ["localhost:9100"],
+        "labels": {
+            "instance": "LOCALHOST"
+        }
+    },
+    {
+        "targets": ["localhost:8080"],
+        "labels": {
+            "instance": "YAZOO"
+        }
+    }
+]

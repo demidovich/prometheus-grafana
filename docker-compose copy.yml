@@ -1,5 +1,9 @@
 version: '2.1'
 
+networks:
+  stat-net:
+    driver: bridge
+
 services:
 
   prometheus:
@@ -16,9 +20,10 @@ services:
       - '--storage.tsdb.retention.time=200h'
       - '--web.enable-lifecycle'
     restart: unless-stopped
-    ports:
-      - "9090:9090"
-    network_mode: "host"
+    expose:
+      - 9090
+    networks:
+      - stat-net
     labels:
       org.label-schema.group: "monitoring"
 
@@ -31,9 +36,10 @@ services:
       - '--config.file=/etc/alertmanager/config.yml'
       - '--storage.path=/alertmanager'
     restart: unless-stopped
-    ports:
-      - "9093:9093"
-    network_mode: "host"
+    expose:
+      - 9093
+    networks:
+      - stat-net
     labels:
       org.label-schema.group: "monitoring"
 
@@ -50,9 +56,10 @@ services:
       - '--path.sysfs=/host/sys'
       - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
     restart: unless-stopped
-    ports:
-      - "9100:9100"
-    network_mode: "host"
+    expose:
+      - 9100
+    networks:
+      - stat-net
     labels:
       org.label-schema.group: "monitoring"
 
@@ -84,8 +91,10 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
       - GF_USERS_ALLOW_SIGN_UP=false
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    expose:
+      - 3000
+    networks:
+      - stat-net
     labels:
       org.label-schema.group: "monitoring"
 
@@ -100,21 +109,21 @@ services:
   #   labels:
   #     org.label-schema.group: "monitoring"
 
-  # caddy:
-  #   image: stefanprodan/caddy
-  #   container_name: stat-caddy
-  #   ports:
-  #     - "3000:3000"
-  #     - "9090:9090"
-  #     - "9093:9093"
-  #     - "9091:9091"
-  #   volumes:
-  #     - ./etc/caddy:/etc/caddy
-  #   environment:
-  #     - ADMIN_USER=${ADMIN_USER:-admin}
-  #     - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
-  #   restart: unless-stopped
-  #   networks:
-  #     - stat-net
-  #   labels:
-  #     org.label-schema.group: "monitoring"
+  caddy:
+    image: stefanprodan/caddy
+    container_name: stat-caddy
+    ports:
+      - "3000:3000"
+      - "9090:9090"
+      - "9093:9093"
+      - "9091:9091"
+    volumes:
+      - ./etc/caddy:/etc/caddy
+    environment:
+      - ADMIN_USER=${ADMIN_USER:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+    restart: unless-stopped
+    networks:
+      - stat-net
+    labels:
+      org.label-schema.group: "monitoring"

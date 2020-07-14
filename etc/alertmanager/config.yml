@@ -1,13 +1,11 @@
-
 route:
-  group_wait: 20s        #  Частота
-  group_interval: 20s   #  уведомлений 
-  repeat_interval: 60s  #  в телеграм
-  group_by: ['alertname', 'cluster', 'service']
-  receiver: alertmanager-bot
+    receiver: 'slack'
 
 receivers:
-- name: alertmanager-bot
-  webhook_configs:
-  - send_resolved: true
-    url: 'http://ip_telegram_bot:8080'
+    - name: 'slack'
+      slack_configs:
+          - send_resolved: true
+            text: "{{ .CommonAnnotations.description }}"
+            username: 'Prometheus'
+            channel: '#<channel-name>'
+            api_url: 'https://hooks.slack.com/services/<webhook-id>'
