@@ -19,8 +19,6 @@ services:
     ports:
       - "9090:9090"
     network_mode: "host"
-    labels:
-      org.label-schema.group: "monitoring"
 
   alertmanager:
     image: prom/alertmanager:v0.21.0
@@ -34,8 +32,6 @@ services:
     ports:
       - "9093:9093"
     network_mode: "host"
-    labels:
-      org.label-schema.group: "monitoring"
 
   nodeexporter:
     image: prom/node-exporter:v1.0.1
@@ -53,25 +49,6 @@ services:
     ports:
       - "9100:9100"
     network_mode: "host"
-    labels:
-      org.label-schema.group: "monitoring"
-
-  # cadvisor:
-  #   image: gcr.io/cadvisor/cadvisor:v0.37.0
-  #   container_name: stat-cadvisor
-  #   volumes:
-  #     - /:/rootfs:ro
-  #     - /var/run:/var/run:rw
-  #     - /sys:/sys:ro
-  #     - /var/lib/docker:/var/lib/docker:ro
-  #     #- /cgroup:/cgroup:ro #doesn't work on MacOS only for Linux
-  #   restart: unless-stopped
-  #   expose:
-  #     - 8080
-  #   networks:
-  #     - stat-net
-  #   labels:
-  #     org.label-schema.group: "monitoring"
 
   grafana:
     image: grafana/grafana:7.0.6
@@ -86,35 +63,18 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
-    labels:
-      org.label-schema.group: "monitoring"
+    network_mode: "host"
 
-  # pushgateway:
-  #   image: prom/pushgateway:v1.2.0
-  #   container_name: stat-pushgateway
+  # cadvisor:
+  #   image: gcr.io/cadvisor/cadvisor:v0.37.0
+  #   container_name: stat-cadvisor
+  #   volumes:
+  #     - /:/rootfs:ro
+  #     - /var/run:/var/run:rw
+  #     - /sys:/sys:ro
+  #     - /var/lib/docker:/var/lib/docker:ro
+  #     #- /cgroup:/cgroup:ro #doesn't work on MacOS only for Linux
   #   restart: unless-stopped
   #   expose:
-  #     - 9091
-  #   networks:
-  #     - stat-net
-  #   labels:
-  #     org.label-schema.group: "monitoring"
-
-  # caddy:
-  #   image: stefanprodan/caddy
-  #   container_name: stat-caddy
-  #   ports:
-  #     - "3000:3000"
-  #     - "9090:9090"
-  #     - "9093:9093"
-  #     - "9091:9091"
-  #   volumes:
-  #     - ./etc/caddy:/etc/caddy
-  #   environment:
-  #     - ADMIN_USER=${ADMIN_USER:-admin}
-  #     - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
-  #   restart: unless-stopped
-  #   networks:
-  #     - stat-net
-  #   labels:
-  #     org.label-schema.group: "monitoring"
+  #     - 8080
+  #   network_mode: "host"
