@@ -61,7 +61,7 @@
       "pluginVersion": "7.0.6",
       "targets": [
         {
-          "expr": "sum(increase(app_http_requests_total{instance=~\"$host\"}[30s]))/30",
+          "expr": "sum(increase(app_http_requests_count{instance=~\"$host\"}[30s]))/30",
           "instant": true,
           "interval": "",
           "intervalFactor": 3,
@@ -71,7 +71,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "RPS OK",
+      "title": "RPS",
       "type": "stat"
     },
     {
@@ -79,7 +79,9 @@
       "fieldConfig": {
         "defaults": {
           "custom": {},
+          "decimals": 0,
           "mappings": [],
+          "min": 1,
           "noValue": "0",
           "thresholds": {
             "mode": "absolute",
@@ -89,7 +91,7 @@
                 "value": null
               },
               {
-                "color": "red",
+                "color": "dark-red",
                 "value": 1
               }
             ]
@@ -107,7 +109,7 @@
       "id": 8,
       "options": {
         "colorMode": "value",
-        "graphMode": "area",
+        "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
@@ -121,7 +123,7 @@
       "pluginVersion": "7.0.6",
       "targets": [
         {
-          "expr": "sum(rate(app_http_statuses_total{instance=~\"$host\",status=~\"(4|5)..\"}[1m]))",
+          "expr": "sum(increase(app_http_requests_count{instance=~\"$host\",status=~\"(4|5)..\"}[30s]))/30",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -133,6 +135,10 @@
       "type": "stat"
     },
     {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
       "datasource": null,
       "fieldConfig": {
         "defaults": {
@@ -153,60 +159,465 @@
         },
         "overrides": []
       },
+      "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 6,
         "x": 6,
         "y": 0
       },
-      "id": 19,
+      "hiddenSeries": false,
+      "id": 23,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
       "options": {
-        "displayMode": "basic",
-        "orientation": "horizontal",
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pluginVersion": "7.0.6",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, \n    sum without (status)(\n        rate(app_http_memory_usage_bytes_bucket[1m])\n    )\n)",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "0.99",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, \n    sum without (status)(\n        rate(app_http_memory_usage_bytes_bucket[1m])\n    )\n)",
+          "interval": "",
+          "legendFormat": "0.95",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transformations": [],
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": 1,
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 1,
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 22,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pluginVersion": "7.0.6",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, \n    sum without (status)(\n        rate(app_http_duration_seconds_bucket[1m])\n    )\n)",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "0.99",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, \n    sum without (status)(\n        rate(app_http_duration_seconds_bucket[1m])\n    )\n)",
+          "interval": "",
+          "legendFormat": "0.95",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Latency",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transformations": [],
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 1,
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 0,
+        "y": 3
+      },
+      "id": 17,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "mean"
           ],
           "fields": "",
           "values": false
-        },
-        "showUnfilled": true
+        }
       },
       "pluginVersion": "7.0.6",
       "targets": [
         {
-          "expr": "sum(increase(app_http_duration_seconds_bucket[1m])) by (le)",
-          "format": "heatmap",
+          "expr": "sum(rate(app_http_memory_usage_bytes_sum{instance=\"$host\"}[1m]))",
+          "instant": false,
           "interval": "",
-          "legendFormat": "{{le}}s",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Latency",
-      "transformations": [
+      "title": "Memory Total",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 1,
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 3,
+        "y": 3
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "pluginVersion": "7.0.6",
+      "targets": [
         {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "Time",
-                "0.01s",
-                "0.025s",
-                "0.05s",
-                "0.1s",
-                "0.25s",
-                "0.5s",
-                "1s",
-                "2.5s",
-                "5s"
-              ]
-            }
-          }
+          "expr": "sum(rate(app_http_memory_usage_bytes_sum{instance=\"$host\"}[1m]))\n/\nsum(rate(app_http_memory_usage_bytes_count{instance=\"$host\"}[1m]))\n",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
         }
       ],
-      "type": "bargauge"
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Memory",
+      "type": "stat"
+    },
+    {
+      "aliasColors": {
+        "200": "rgb(82, 82, 82)",
+        "4xx": "light-orange",
+        "5xx": "semi-dark-red"
+      },
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 6
+      },
+      "hiddenSeries": false,
+      "id": 10,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": false,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pluginVersion": "7.0.6",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "200",
+          "yaxis": 1
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(irate(app_http_requests_count{status=~\"(2)..\",instance=~\"$host\"}[1m])) > 0",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "200",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(irate(app_http_requests_count{status=~\"(4)..\",instance=~\"$host\"}[1m])) > 0",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "4xx",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(irate(app_http_requests_count{status=~\"(5)..\",instance=~\"$host\"}[1m])) > 0",
+          "interval": "",
+          "legendFormat": "5xx",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Requests",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     },
     {
       "aliasColors": {
@@ -247,7 +658,7 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 0
+        "y": 6
       },
       "hiddenSeries": false,
       "id": 16,
@@ -331,9 +742,22 @@
       "datasource": null,
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "mappings": [],
-          "noValue": "0",
+          "custom": {
+            "align": null,
+            "displayMode": "auto"
+          },
+          "decimals": 0,
+          "mappings": [
+            {
+              "from": "",
+              "id": 0,
+              "operator": "",
+              "text": "",
+              "to": "",
+              "type": 1,
+              "value": ""
+            }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -343,35 +767,46 @@
               }
             ]
           },
-          "unit": "decbytes"
+          "unit": "short"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "req"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 3,
-        "w": 3,
+        "h": 6,
+        "w": 8,
         "x": 0,
-        "y": 3
+        "y": 12
       },
-      "id": 6,
+      "id": 12,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        }
+        "showHeader": false,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "req"
+          }
+        ]
       },
       "pluginVersion": "7.0.6",
       "targets": [
         {
-          "expr": "sum(app_http_memory_usage_bytes{instance=~\"$host\"})",
-          "instant": false,
+          "expr": "topk(5, \n    sum(\n        increase(app_http_requests_count{instance=~\"$host\"}[$timeRange])\n    ) by (route)\n) > 0",
+          "format": "table",
+          "hide": false,
+          "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -379,201 +814,112 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Memory",
-      "type": "stat"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 3,
-        "x": 3,
-        "y": 3
-      },
-      "id": 17,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        }
-      },
-      "pluginVersion": "7.0.6",
-      "targets": [
+      "title": "Top",
+      "transformations": [
         {
-          "expr": "sum(rate(app_http_statuses_total{instance=~\"$host\",status=~\"(4|5)..\"}[1m]))",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "Value": "req"
+            }
+          }
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Accounts",
-      "type": "stat"
+      "type": "table"
     },
     {
-      "aliasColors": {
-        "200": "rgb(82, 82, 82)",
-        "4xx": "light-orange",
-        "5xx": "semi-dark-red"
-      },
-      "bars": true,
-      "dashLength": 10,
-      "dashes": false,
       "datasource": null,
       "fieldConfig": {
         "defaults": {
           "custom": {
-            "align": null
+            "align": null,
+            "displayMode": "auto"
           },
-          "mappings": [],
+          "decimals": 1,
+          "mappings": [
+            {
+              "from": "",
+              "id": 0,
+              "operator": "",
+              "text": "",
+              "to": "",
+              "type": 1,
+              "value": ""
+            }
+          ],
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green",
                 "value": null
-              },
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "time"
+            },
+            "properties": [
               {
-                "color": "red",
-                "value": 80
+                "id": "custom.width",
+                "value": 100
               }
             ]
           }
-        },
-        "overrides": []
+        ]
       },
-      "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 12,
-        "x": 0,
-        "y": 6
+        "w": 8,
+        "x": 8,
+        "y": 12
       },
-      "hiddenSeries": false,
-      "id": 10,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": false,
-      "linewidth": 1,
-      "nullPointMode": "null",
+      "id": 20,
       "options": {
-        "dataLinks": []
+        "showHeader": false,
+        "sortBy": []
       },
-      "percentage": false,
       "pluginVersion": "7.0.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "200",
-          "yaxis": 1
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(irate(app_http_statuses_total{status=~\"(2)..\",instance=~\"$host\"}[1m])) > 0",
+          "expr": "topk(5, \n    sum(\n        increase(app_http_requests_count{instance=~\"$host\",status=~\"(4|5)..\"}[$timeRange])\n    ) by (route)\n) > 0",
+          "format": "table",
           "hide": false,
-          "instant": false,
+          "instant": true,
           "interval": "",
-          "legendFormat": "200",
+          "legendFormat": "",
           "refId": "A"
-        },
-        {
-          "expr": "sum(irate(app_http_statuses_total{status=~\"(4)..\",instance=~\"$host\"}[1m])) > 0",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "4xx",
-          "refId": "B"
-        },
-        {
-          "expr": "sum(irate(app_http_statuses_total{status=~\"(5)..\",instance=~\"$host\"}[1m])) > 0",
-          "interval": "",
-          "legendFormat": "5xx",
-          "refId": "C"
         }
       ],
-      "thresholds": [],
       "timeFrom": null,
-      "timeRegions": [],
       "timeShift": null,
-      "title": "Requests OK",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
+      "title": "Error",
+      "transformations": [
         {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "Value": "time",
+              "route": ""
+            }
+          }
         }
       ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
+      "type": "table"
     },
     {
       "datasource": null,
@@ -607,28 +953,36 @@
           },
           "unit": "s"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 6,
-        "w": 12,
-        "x": 12,
-        "y": 6
+        "w": 8,
+        "x": 16,
+        "y": 12
       },
       "id": 13,
       "options": {
         "showHeader": false,
-        "sortBy": [
-          {
-            "desc": false,
-            "displayName": "req"
-          }
-        ]
+        "sortBy": []
       },
       "pluginVersion": "7.0.6",
       "targets": [
         {
-          "expr": "topk(5, \n    sum by (route) (\n        rate(app_http_runtime_seconds_total[5m])\n    )\n    /\n    sum by (route) (\n        increase(app_http_requests_total[5m])\n    )\n)",
+          "expr": "topk(5, \n    sum by (route) (\n        rate(app_http_runtime_seconds[1m])\n    )\n    /\n    sum by (route) (\n        increase(app_http_requests_count[1m])\n    )\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -639,7 +993,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Slow request",
+      "title": "Slow",
       "transformations": [
         {
           "id": "organize",
@@ -651,204 +1005,6 @@
             "renameByName": {
               "Value": "time",
               "route": ""
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "aliasColors": {
-        "4xx": "light-orange",
-        "5xx": "red"
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": null
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 0,
-        "y": 12
-      },
-      "hiddenSeries": false,
-      "id": 11,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pluginVersion": "7.0.6",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum(app_http_memory_usage_bytes{instance=~\"$host\"})",
-          "hide": false,
-          "instant": false,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Memory",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "decimals": 0,
-          "format": "bytes",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": null,
-            "displayMode": "auto"
-          },
-          "decimals": 1,
-          "mappings": [
-            {
-              "from": "",
-              "id": 0,
-              "operator": "",
-              "text": "",
-              "to": "",
-              "type": 1,
-              "value": ""
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 12,
-        "y": 12
-      },
-      "id": 12,
-      "options": {
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "req"
-          }
-        ]
-      },
-      "pluginVersion": "7.0.6",
-      "targets": [
-        {
-          "expr": "topk(5, sum (increase(app_http_requests_total{instance=~\"$host\"}[$timeRange])) by (route)) > 0",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top route",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true
-            },
-            "indexByName": {},
-            "renameByName": {
-              "Value": "req"
             }
           }
         }
@@ -965,7 +1121,7 @@
     ]
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
@@ -983,7 +1139,7 @@
     ]
   },
   "timezone": "",
-  "title": "Application 2",
+  "title": "Application",
   "uid": "GrY-z9nMk",
-  "version": 5
+  "version": 12
 }
